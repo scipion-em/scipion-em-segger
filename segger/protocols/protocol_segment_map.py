@@ -24,10 +24,13 @@
 # *
 # **************************************************************************
 
-import os, glob
+import os
+import numpy as np
 
-from pwem.objects import Volume, SetOfVolumes
+from pwem.objects import Volume
 from pwem.protocols import EMProtocol
+from pwem.emlib.image import ImageHandler
+from pwem import emlib
 
 import pyworkflow.protocol.params as params
 import pyworkflow.utils as pwutils
@@ -40,7 +43,9 @@ from chimera import Plugin as chimera
 
 class ProtSegmentMap(EMProtocol):
     """Protcol to perform the segmentation of maps into different regions based on
-    the watershed algorithm"""
+    the watershed algorithm
+    For more information, follow the next link:
+    https://cryoem.slac.stanford.edu/ncmi/resources/software/segger"""
     _label = 'segment map'
 
     def __init__(self, **kwargs):
@@ -49,8 +54,8 @@ class ProtSegmentMap(EMProtocol):
     # --------------------------- DEFINE param functions ----------------------
     def _defineParams(self, form):
         form.addSection(label='Input data')
-        form.addParam('inputVolumes', params.PointerParam, pointerClass='SetOfVolumes', label='Input volumes', important=True,
-                      help='Select a Set Of Volumes to be segmented')
+        form.addParam('inputVolume', params.PointerParam, pointerClass='Volume', label='Input volume', important=True,
+                      help='Select a Volume to be segmented')
         form.addSection(label='Mode')
         form.addParam('grouping', params.EnumParam, choices=['smoothing', 'connectivity'], default=0,
                       label='Grouping mode', display=params.EnumParam.DISPLAY_HLIST,
@@ -75,6 +80,12 @@ class ProtSegmentMap(EMProtocol):
         form.addParam('mapThreshold', params.FloatParam, default=-1, label='Map threshold',
                       help='Only include voxels with map value above this values (by default, 3sigma above mean will be used')
         form.addParam('maxRegions', params.IntParam, default=5, label='Maximum number of regions')
+        form.addSection(label='Output')
+        form.addParam('pieces', params.EnumParam, label='Type of mask', choices=['Mask', 'Pieces', 'Both'], default=0,
+                      display=params.EnumParam.DISPLAY_HLIST,
+                      help='Mask: A single Volume containing several identifiers for each piece\n'
+                           'Pieces: Several Volumes (files) one for each segmented region'
+                           'Both: Mask + Pieces')
 
     # --------------------------- INSERT steps functions ----------------------
     def _insertAllSteps(self):
@@ -89,23 +100,41 @@ class ProtSegmentMap(EMProtocol):
         Chimera.runProgram(Plugin.getProgram(), args)
 
     def createOutputStep(self):
-        setVolumes = self._createSetOfVolumes()
-        setVolumes.copyInfo(self.inputVolumes.get())
-        for file in glob.glob(self._getExtraPath('*.mrc')):
-            volume = Volume()
-            volume.setLocation(file)
-            volume.setSamplingRate(setVolumes.getSamplingRate())
-            setVolumes.append(volume)
-        self._defineOutputs(outputSegmentations=setVolumes)
-        self._defineSourceRelation(self.inputVolumes, setVolumes)
+        file = 'segmask_' + pwutils.removeBaseExt(self.inputVolume.get().getFileName()) + '.mrc'
+        file = self._getExtraPath(file)
+        volume = Volume()
+        volume.setLocation(file)
+        volume.setSamplingRate(self.inputVolume.get().getSamplingRate())
+        if self.pieces.get() == 0 or self.pieces.get() == 2:
+            self._defineOutputs(outputSegmentation=volume)
+            self._defineSourceRelation(self.inputVolume, volume)
+        if self.pieces.get() == 1 or self.pieces.get() == 2:
+            setVolumes = self._createSetOfVolumes()
+            setVolumes.setSamplingRate(self.inputVolume.get().getSamplingRate())
+            ih = ImageHandler()
+            mask = ih.read(volume)
+            mask = mask.getData()
+            ids_mask = np.unique(mask)
+            for idm in ids_mask:
+                piece = Volume()
+                piece.setLocation(self._getExtraPath('segmentation_group_%d.mrc' % int(idm)))
+                piece.setSamplingRate(self.inputVolume.get().getSamplingRate())
+                mask_logical = mask == idm
+                pieceData = mask * mask_logical / idm
+                img = ih.createImage()
+                img.setData(pieceData)
+                ih.write(img, piece)
+                setVolumes.append(piece)
+            self._defineOutputs(outputGroups=setVolumes)
+            self._defineSourceRelation(self.inputVolume, setVolumes)
+
 
 
     # --------------------------- UTILS functions ----------------------------
     def writeChimeraScript(self):
         f = open(os.path.join(chimera.getHome(), 'share', 'Segger', 'scriptChimera.py'), "w")
         f.write("from chimera import runCommand\n")
-        for volume in self.inputVolumes.get().iterItems():
-            f.write("runCommand('open %s')\n" % volume.getFileName())
+        f.write("runCommand('open %s')\n" % self.inputVolume.get().getFileName())
 
         if self.grouping.get() == 0:
             groupMode = 'smoothing'
@@ -175,7 +204,7 @@ class ProtSegmentMap(EMProtocol):
     def _methods(self):
         methodsMsgs = []
         if self.getOutputsSize() >= 1:
-            msg = ("%d Segmentations succesfully generated" % len(self.outputSegmentations))
+            msg = ("Segmentation succesfully generated: %s" % self.outputSegmentation.getFileName())
             methodsMsgs.append(msg)
         else:
             methodsMsgs.append("Segmentation not ready yet")
@@ -183,10 +212,10 @@ class ProtSegmentMap(EMProtocol):
 
     def _summary(self):
         summary = []
-        summary.append("Number of input Volumes: %d\n"
-                       % len(self.inputVolumes.get()))
+        summary.append("Input Volume provided: %s\n"
+                       % self.inputVolume.get().getFileName())
         if self.getOutputsSize() >= 1:
-            summary.append("%d Segmentations succesfully generated" % len(self.outputSegmentations))
+            summary.append("Segmentation succesfully generated: %s" % self.outputSegmentation.getFileName())
         else:
             summary.append("Segmentations not ready yet.")
         return summary

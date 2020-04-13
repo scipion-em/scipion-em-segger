@@ -24,7 +24,11 @@
 # *
 # **************************************************************************
 
+import os
+
 import pwem
+
+import pyworkflow.config as conf
 
 from chimera import Plugin as chimera_plugin
 
@@ -52,3 +56,20 @@ class Plugin(pwem.Plugin):
     def getProgram(cls, progName="chimera"):
         """ Return the program binary that will be used. """
         chimera_plugin.getProgram(progName)
+
+    @classmethod
+    def defineBinaries(cls, env):
+        SW_CH = env.getEmFolder()
+        segger_commands = [('git clone https://github.com/gregdp/segger.git %s' % SW_CH,
+                            '%s %s/segger/Segger/install.py %s/chimera-1.13.1/bin/chimera' % (env.getPython(), SW_CH, SW_CH))]
+
+        env.addPackage('Segger',
+                       version='2.1.1',
+                       commands=segger_commands,
+                       default=False)
+
+    # TODO: Instalar binarios desde Plugin
+    # TODO: Salida es mascara/partes de la mascara/los dos
+    # TODO: Hacer protocolo para juntar partes mascara que se quieran en una sola
+    # TODO: Slack conversacion Carlos esta el PDB
+
