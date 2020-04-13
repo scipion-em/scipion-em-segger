@@ -114,6 +114,7 @@ class ProtSegmentMap(EMProtocol):
             mask = ih.read(volume)
             mask = mask.getData()
             ids_mask = np.unique(mask)
+            ids_mask = np.delete(ids_mask, 0)
             for idm in ids_mask:
                 piece = Volume()
                 piece.setLocation(self._getExtraPath('segmentation_group_%d.mrc' % int(idm)))
