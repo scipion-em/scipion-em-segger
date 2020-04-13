@@ -204,8 +204,12 @@ class ProtSegmentMap(EMProtocol):
     def _methods(self):
         methodsMsgs = []
         if self.getOutputsSize() >= 1:
-            msg = ("Segmentation succesfully generated: %s" % self.outputSegmentation.getFileName())
-            methodsMsgs.append(msg)
+            if hasattr(self, 'outputSegmentation'):
+                msg = ("Segmentation mask succesfully generated: %s\n" % self.outputSegmentation.getFileName())
+                methodsMsgs.append(msg)
+            if hasattr(self, 'outputGroups'):
+                msg = ("Groups seprated into %d different masks\n" % len(self.outputGroups))
+                methodsMsgs.append(msg)
         else:
             methodsMsgs.append("Segmentation not ready yet")
         return methodsMsgs
@@ -215,7 +219,12 @@ class ProtSegmentMap(EMProtocol):
         summary.append("Input Volume provided: %s\n"
                        % self.inputVolume.get().getFileName())
         if self.getOutputsSize() >= 1:
-            summary.append("Segmentation succesfully generated: %s" % self.outputSegmentation.getFileName())
+            if hasattr(self, 'outputSegmentation'):
+                msg = ("Segmentation mask succesfully generated: %s\n" % self.outputSegmentation.getFileName())
+                summary.append(msg)
+            if hasattr(self, 'outputGroups'):
+                msg = ("Groups seprated into %d different masks\n" % len(self.outputGroups))
+                summary.append(msg)
         else:
             summary.append("Segmentations not ready yet.")
         return summary

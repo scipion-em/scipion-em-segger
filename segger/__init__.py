@@ -69,7 +69,4 @@ class Plugin(pwem.Plugin):
                        default=False)
 
     # TODO: Instalar binarios desde Plugin
-    # TODO: Salida es mascara/partes de la mascara/los dos
-    # TODO: Hacer protocolo para juntar partes mascara que se quieran en una sola
-    # TODO: Slack conversacion Carlos esta el PDB
 
