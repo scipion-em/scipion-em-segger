@@ -57,7 +57,7 @@ class ProtSegmentMap(EMProtocol):
         form.addParam('inputVolume', params.PointerParam, pointerClass='Volume', label='Input volume', important=True,
                       help='Select a Volume to be segmented')
         form.addSection(label='Mode')
-        form.addParam('grouping', params.EnumParam, choices=['smoothing', 'connectivity'], default=0,
+        form.addParam('grouping', params.EnumParam, choices=['Smoothing', 'Connectivity'], default=0,
                       label='Grouping mode', display=params.EnumParam.DISPLAY_HLIST,
                       help='smoothing tends to work better at lower resolutions (4A and lower)\n'
                            'connectivity tends to work better at higher resolutions (4A and better)')
