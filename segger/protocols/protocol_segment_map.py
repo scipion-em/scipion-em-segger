@@ -30,7 +30,6 @@ import numpy as np
 from pwem.objects import Volume
 from pwem.protocols import EMProtocol
 from pwem.emlib.image import ImageHandler
-from pwem import emlib
 
 import pyworkflow.protocol.params as params
 import pyworkflow.utils as pwutils

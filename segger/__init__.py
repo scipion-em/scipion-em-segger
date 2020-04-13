@@ -24,11 +24,7 @@
 # *
 # **************************************************************************
 
-import os
-
 import pwem
-
-import pyworkflow.config as conf
 
 from chimera import Plugin as chimera_plugin
 
@@ -37,7 +33,7 @@ _logo = "icon.png"
 _references = ['GRIGORE2010']
 
 class Plugin(pwem.Plugin):
-    _supportedVersions = 'V2_1_1'
+    _supportedVersions = 'V2_3'
 
     @classmethod
     def _defineVariables(cls):
@@ -60,13 +56,11 @@ class Plugin(pwem.Plugin):
     @classmethod
     def defineBinaries(cls, env):
         SW_CH = env.getEmFolder()
-        segger_commands = [('git clone https://github.com/gregdp/segger.git %s' % SW_CH,
-                            '%s %s/segger/Segger/install.py %s/chimera-1.13.1/bin/chimera' % (env.getPython(), SW_CH, SW_CH))]
+        command = '%s install.py %s/chimera-1.13.1/' % (env.getPython(), SW_CH)
+        segger_commands = [(command, '../chimera-1.13.1/share/Segger')]
 
-        env.addPackage('Segger',
-                       version='2.1.1',
+        env.addPackage('segger',
+                       version='2.3',
+                       tar='segger-2.3.tar.gz',
                        commands=segger_commands,
-                       default=False)
-
-    # TODO: Instalar binarios desde Plugin
-
+                       default=True)

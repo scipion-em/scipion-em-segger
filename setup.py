@@ -25,7 +25,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='scipion-em-segger',  # Required
-    version='2.1.1',  # Required
+    version='2.3',  # Required
     description='Scipion plugin for segger.',  # Required
     long_description=long_description,  # Optional
     url='https://github.com/scipion-em/scipion-em-segger',  # Optional
