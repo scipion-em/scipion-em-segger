@@ -78,7 +78,6 @@ class ProtSegmentMap(EMProtocol):
                       help='When to stop the grouping process')
         form.addParam('mapThreshold', params.FloatParam, default=-1, label='Map threshold',
                       help='Only include voxels with map value above this values (by default, 3sigma above mean will be used')
-        form.addParam('maxRegions', params.IntParam, default=5, label='Maximum number of regions')
         form.addSection(label='Output')
         form.addParam('pieces', params.EnumParam, label='Type of mask', choices=['Mask', 'Pieces', 'Both'], default=0,
                       display=params.EnumParam.DISPLAY_HLIST,
@@ -152,7 +151,6 @@ class ProtSegmentMap(EMProtocol):
                    'numSmoothingSteps = %d\n' \
                    'smoothingStepSize = %d\n' \
                    'numConnectivitySteps = %d\n' \
-                   'outputLargestN = %d\n' \
                    'outputRegions = []\n' \
                    'options = {}\n' \
                    'options["outputMapSize"] = "box"\n' \
@@ -181,7 +179,7 @@ class ProtSegmentMap(EMProtocol):
                    '\telif groupingMode == "connectivity" :\n' \
                    '\t\tsmod.group_connected_n (numConnectivitySteps, stopAtNumberOfRegions)\n' \
                    '\tregions_seg = smod.grouped_regions()\n' \
-                   '\toutputN = min ( outputLargestN, len(regions_seg) )\n' \
+                   '\toutputN = len(regions_seg)\n' \
                    '\timport os\n' \
                    '\tmdir, mfile = os.path.split(dmap.data.path)\n' \
                    '\tmname, mext = os.path.splitext ( mfile )\n' \
@@ -195,7 +193,7 @@ class ProtSegmentMap(EMProtocol):
                    '\texport_mask(smod, savePath=outMask)\n' \
                    '\twrite_segmentation(smod, path=outSeg)\n' % \
                    (self._getExtraPath(), groupMode, self.minRegionSize.get(), self.minContactVoxels.get(), self.stopGroup.get(),
-                    self.mapThreshold.get(), self.smoothSteps.get(), self.smoothStepSize.get(), self.connectSteps.get(), self.maxRegions.get())
+                    self.mapThreshold.get(), self.smoothSteps.get(), self.smoothStepSize.get(), self.connectSteps.get())
 
         f.write(contents)
         f.close()
