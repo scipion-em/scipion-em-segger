@@ -68,5 +68,6 @@ class SeggerViewer(pwviewer.Viewer):
         f.write('from chimera import runCommand\n')
         for segmentation in glob.glob(os.path.join(outPath, '*.seg')):
             f.write('runCommand("open %s")\n' % os.path.abspath(segmentation))
+        f.write('runCommand("vol all hide")\n')
         f.close()
         return filePath
