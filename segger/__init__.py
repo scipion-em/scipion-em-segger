@@ -55,9 +55,11 @@ class Plugin(pwem.Plugin):
 
     @classmethod
     def defineBinaries(cls, env):
+        SG_INSTALLED = 'segger_%s_installed' % '2.3'
         SW_CH = env.getEmFolder()
-        command = '%s install.py %s/chimera-1.13.1/' % (env.getPython(), SW_CH)
-        segger_commands = [(command, '../chimera-1.13.1/share/Segger')]
+        command = '%s install.py %s/chimera-1.13.1/ && ' % (env.getPython(), SW_CH)
+        command += 'touch %s' % SG_INSTALLED
+        segger_commands = [(command, SG_INSTALLED)]
 
         env.addPackage('segger',
                        version='2.3',
