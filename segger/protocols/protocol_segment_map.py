@@ -67,7 +67,7 @@ class ProtSegmentMap(EMProtocol):
         form.addParam('connectSteps', params.IntParam, default=10, condition='grouping == 1',
                       label='Number of connectivity steps')
         form.addSection('General parameters')
-        form.addParam('minRegionSize', params.IntParam, default=1, label='Minimum region zize',
+        form.addParam('minRegionSize', params.IntParam, default=1, label='Minimum region size',
                       help='Minimum region size in number of voxels (can be turned to A^3 by dividing by step size)\n'
                            'as below when set to 1, all regions will be kept; for a value of 5, only'
                            'regions that have at least 5 voxels would be kept after the first'
