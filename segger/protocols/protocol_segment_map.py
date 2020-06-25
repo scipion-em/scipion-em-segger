@@ -189,8 +189,9 @@ class ProtSegmentMap(EMProtocol):
                    '\tfileName = os.path.splitext(dmap.name)[0]\n' \
                    '\toutMask = os.path.join(path, "segmask_" + fileName + ".mrc") \n' \
                    '\toutSeg = os.path.join(path, "seg_" + fileName + ".seg") \n'\
-                   '\texport_mask(smod, savePath=outMask)\n' \
-                   '\twrite_segmentation(smod, path=outSeg)\n' % \
+                   '\texport_mask(smod, session, savePath=outMask)\n' \
+                   '\twrite_segmentation(smod, path=outSeg)\n' \
+                   'exit()\n' % \
                    (self._getExtraPath(), groupMode, self.minRegionSize.get(), self.minContactVoxels.get(), self.stopGroup.get(),
                     self.mapThreshold.get(), self.smoothSteps.get(), self.smoothStepSize.get(), self.connectSteps.get())
 
