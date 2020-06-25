@@ -65,9 +65,9 @@ class SeggerViewer(pwviewer.Viewer):
         outPath = self.protocol._getExtraPath()
         filePath = os.path.join(chimera.getHome(), 'share', 'Segger', 'viewChimera.py')
         f = open(filePath, "w")
-        f.write('from chimera import runCommand\n')
+        f.write('from chimerax.core.commands import run\n')
         for segmentation in glob.glob(os.path.join(outPath, '*.seg')):
-            f.write('runCommand("open %s")\n' % os.path.abspath(segmentation))
-        f.write('runCommand("vol all hide")\n')
+            f.write('run(session, "open %s")\n' % os.path.abspath(segmentation))
+        f.write('run(session, "vol all hide")\n')
         f.close()
         return filePath

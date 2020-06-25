@@ -132,8 +132,8 @@ class ProtSegmentMap(EMProtocol):
     # --------------------------- UTILS functions ----------------------------
     def writeChimeraScript(self):
         f = open(os.path.join(chimera.getHome(), 'share', 'Segger', 'scriptChimera.py'), "w")
-        f.write("from chimera import runCommand\n")
-        f.write("runCommand('open %s')\n" % self.inputVolume.get().getFileName())
+        f.write("from chimerax.core.commands import run\n")
+        f.write("run(session, 'open %s')\n" % self.inputVolume.get().getFileName())
 
         if self.grouping.get() == 0:
             groupMode = 'smoothing'
@@ -156,19 +156,19 @@ class ProtSegmentMap(EMProtocol):
                    'options["outputMapSize"] = "box"\n' \
                    'options["borderWidth"] = 4\n' \
                    'options["mask01"] = False\n' \
-                   'import Segger\n' \
-                   'import chimera\n' \
-                   'import VolumeViewer\n' \
-                   'import regions\n' \
+                   'from chimerax import segger as Segger\n' \
+                   'from chimerax.core.models import Models\n' \
+                   'from chimerax.map.volume import Volume\n' \
+                   'from chimerax.segger import regions\n' \
                    'import numpy\n' \
-                   'from segcmd import export_mask\n' \
-                   'from segfile import write_segmentation\n' \
-                   'maps = chimera.openModels.list (modelTypes = [VolumeViewer.volume.Volume])\n' \
+                   'from chimerax.segger.segcmd import export_mask\n' \
+                   'from chimerax.segger.segfile import write_segmentation\n' \
+                   'maps = session.models.list(type=Volume)\n' \
                    'for dmap in maps:\n' \
                    '\tif mapThreshold == None :\n' \
                    '\t\tM = dmap.data.full_matrix()\n' \
                    '\t\tmapThreshold = numpy.average(M)+numpy.std(M)*3.0\n' \
-                   '\tsmod = regions.Segmentation(dmap.name, dmap)\n' \
+                   '\tsmod = regions.Segmentation(dmap.name, session, dmap)\n' \
                    '\tsmod.calculate_watershed_regions ( dmap, mapThreshold )\n' \
                    '\tif minRegionSize > 1 :\n' \
                    '\t\tsmod.remove_small_regions(minRegionSize)\n' \
@@ -184,7 +184,6 @@ class ProtSegmentMap(EMProtocol):
                    '\tmdir, mfile = os.path.split(dmap.data.path)\n' \
                    '\tmname, mext = os.path.splitext ( mfile )\n' \
                    '\tif outputN > 0 :\n' \
-                   '\t\timport Segger.extract_region_dialog\n' \
                    '\t\tfor i in range ( outputN ) :\n' \
                    '\t\t\treg = regions_seg[i]\n' \
                    '\tfileName = os.path.splitext(dmap.name)[0]\n' \
