@@ -33,7 +33,7 @@ from pwem.viewers.viewer_chimera import ChimeraView
 
 from chimera import Plugin as chimera
 
-from ..protocols.protocol_segment_map import ProtSegmentMap
+from ..protocols.protocol_segger_segment_map import ProtSeggerSegmentMap
 from segger import Plugin
 
 class SeggerViewer(pwviewer.Viewer):
@@ -41,7 +41,7 @@ class SeggerViewer(pwviewer.Viewer):
     with the Xmipp program xmipp_showj
     """
     _environments = [pwviewer.DESKTOP_TKINTER]
-    _targets = [ProtSegmentMap]
+    _targets = [ProtSeggerSegmentMap]
 
     def __init__(self, **kwargs):
         pwviewer.Viewer.__init__(self, **kwargs)
@@ -55,7 +55,7 @@ class SeggerViewer(pwviewer.Viewer):
         views = []
         cls = type(obj)
 
-        if issubclass(cls, ProtSegmentMap):
+        if issubclass(cls, ProtSeggerSegmentMap):
             filePath = self.chimeraViewFile()
             views.append(ChimeraView(filePath))
 

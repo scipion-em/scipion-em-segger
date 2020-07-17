@@ -40,7 +40,7 @@ from segger import Plugin
 from chimera import Plugin as chimera
 
 
-class ProtSegmentMap(EMProtocol):
+class ProtSeggerSegmentMap(EMProtocol):
     """Protcol to perform the segmentation of maps into different regions based on
     the watershed algorithm
     For more information, follow the next link:

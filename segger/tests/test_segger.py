@@ -29,7 +29,7 @@ from pwem.protocols import ProtImportVolumes
 from pyworkflow.tests import BaseTest, setupTestProject
 from pyworkflow.tests.tests import DataSet
 
-from ..protocols.protocol_segment_map import ProtSegmentMap
+from ..protocols.protocol_segger_segment_map import ProtSeggerSegmentMap
 
 class TestSeggerBase(BaseTest):
     @classmethod
@@ -73,7 +73,7 @@ class TestSegmentMap(TestSeggerBase):
         self.assertIsNotNone(protImportVolumes.outputVolume,
                              "There was a problem with volume output")
 
-        protSegmentationMap = self.newProtocol(ProtSegmentMap,
+        protSegmentationMap = self.newProtocol(ProtSeggerSegmentMap,
                                                objLabel='Segmentation - %s - Output %s' % (mode, output),
                                                inputVolume=protImportVolumes.outputVolume,
                                                grouping=grouping,

@@ -24,4 +24,4 @@
 # *
 # **************************************************************************
 
-from .protocol_segment_map import ProtSegmentMap
+from .protocol_segger_segment_map import ProtSeggerSegmentMap
