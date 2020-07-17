@@ -37,8 +37,8 @@ from ..protocols.protocol_segger_segment_map import ProtSeggerSegmentMap
 from segger import Plugin
 
 class SeggerViewer(pwviewer.Viewer):
-    """ Wrapper to visualize different type of objects
-    with the Xmipp program xmipp_showj
+    """
+     Wrapper to visualize outputs of Segger software
     """
     _environments = [pwviewer.DESKTOP_TKINTER]
     _targets = [ProtSeggerSegmentMap]
