@@ -93,7 +93,7 @@ class ProtSegmentMap(EMProtocol):
     # --------------------------- STEPS functions -----------------------------
     def segmentationStep(self):
         self.writeChimeraScript()
-        args = '--nogui --silent --nostatus --script %s' % (os.path.join(chimera.getHome(), 'share', 'Segger', 'scriptChimera.py'))
+        args = '--nogui --silent --nostatus --script %s' % (self._getExtraPath('scriptChimera.py'))
 
         Chimera.runProgram(Plugin.getProgram(), args)
 
@@ -131,7 +131,7 @@ class ProtSegmentMap(EMProtocol):
 
     # --------------------------- UTILS functions ----------------------------
     def writeChimeraScript(self):
-        f = open(os.path.join(chimera.getHome(), 'share', 'Segger', 'scriptChimera.py'), "w")
+        f = open(self._getExtraPath('scriptChimera.py'), "w")
         f.write("from chimerax.core.commands import run\n")
         f.write("run(session, 'open %s')\n" % self.inputVolume.get().getFileName())
 

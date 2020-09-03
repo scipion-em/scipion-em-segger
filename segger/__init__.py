@@ -24,6 +24,8 @@
 # *
 # **************************************************************************
 
+import os
+
 import pwem
 
 from chimera import Plugin as chimera_plugin
@@ -55,9 +57,9 @@ class Plugin(pwem.Plugin):
 
     @classmethod
     def defineBinaries(cls, env):
-        SW_CH = env.getEmFolder()
-        command = '%s install.py %s/chimera-1.13.1/' % (env.getPython(), SW_CH)
-        segger_commands = [(command, '../chimera-1.13.1/share/Segger')]
+        chimera_home = chimera_plugin.getHome()
+        command = '%s install.py %s' % (env.getPython(), chimera_home)
+        segger_commands = [(command, os.path.join(chimera_home, 'share', 'Segger'))]
 
         env.addPackage('segger',
                        version='2.3',
