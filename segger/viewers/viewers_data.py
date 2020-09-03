@@ -37,8 +37,7 @@ from ..protocols.protocol_segment_map import ProtSegmentMap
 from segger import Plugin
 
 class SeggerViewer(pwviewer.Viewer):
-    """ Wrapper to visualize different type of objects
-    with the Xmipp program xmipp_showj
+    """ Wrapper to visualize the output of Segger segmentation
     """
     _environments = [pwviewer.DESKTOP_TKINTER]
     _targets = [ProtSegmentMap]
@@ -63,7 +62,7 @@ class SeggerViewer(pwviewer.Viewer):
 
     def chimeraViewFile(self):
         outPath = self.protocol._getExtraPath()
-        filePath = os.path.join(chimera.getHome(), 'share', 'Segger', 'viewChimera.py')
+        filePath = self.protocol._getTmpPath('viewChimera.py')
         f = open(filePath, "w")
         f.write('from chimerax.core.commands import run\n')
         for segmentation in glob.glob(os.path.join(outPath, '*.seg')):
