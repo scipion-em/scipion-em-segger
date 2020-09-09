@@ -178,14 +178,9 @@ class ProtSegmentMap(EMProtocol):
                    '\t\tsmod.smooth_and_group(numSmoothingSteps, smoothingStepSize, stopAtNumberOfRegions)\n' \
                    '\telif groupingMode == "connectivity" :\n' \
                    '\t\tsmod.group_connected_n (numConnectivitySteps, stopAtNumberOfRegions)\n' \
-                   '\tregions_seg = smod.grouped_regions()\n' \
-                   '\toutputN = len(regions_seg)\n' \
                    '\timport os\n' \
                    '\tmdir, mfile = os.path.split(dmap.data.path)\n' \
                    '\tmname, mext = os.path.splitext ( mfile )\n' \
-                   '\tif outputN > 0 :\n' \
-                   '\t\tfor i in range ( outputN ) :\n' \
-                   '\t\t\treg = regions_seg[i]\n' \
                    '\tfileName = os.path.splitext(dmap.name)[0]\n' \
                    '\toutMask = os.path.join(path, "segmask_" + fileName + ".mrc") \n' \
                    '\toutSeg = os.path.join(path, "seg_" + fileName + ".seg") \n'\

@@ -28,8 +28,9 @@ import os
 
 import pwem
 
-from chimera import Plugin as chimera_plugin
+# from scipion.install.funcs import VOID_TGZ
 
+from chimera import Plugin as chimera_plugin
 
 _logo = "icon.png"
 _references = ['GRIGORE2010']
@@ -57,12 +58,21 @@ class Plugin(pwem.Plugin):
 
     @classmethod
     def defineBinaries(cls, env):
-        chimera_home = chimera_plugin.getHome()
-        command = '%s install.py %s' % (env.getPython(), chimera_home)
-        segger_commands = [(command, os.path.join(chimera_home, 'share', 'Segger'))]
-
-        env.addPackage('segger',
-                       version='2.3',
-                       tar='segger-2.3.tar.gz',
-                       commands=segger_commands,
-                       default=True)
+        pass
+        # chimera_home = chimera_plugin.getHome()
+        #
+        # segger_commands = []
+        # segger_commands.append(('wget -c https://github.com/tomgoddard/segger/archive/56b8003.tar.gz', "56b8003.tar.gz"))
+        # segger_commands.append(("tar -xvf 56b8003.tar.gz", []))
+        # segger_commands.append(("mv segger* segger", []))
+        #
+        # installationCmd = 'cd %s && ' % os.path.join('segger', 'Segger')
+        # installationCmd += '%s install.py %s' % (env.getPython(), chimera_home)
+        #
+        # segger_commands.append((installationCmd, os.path.join(chimera_home, 'share', 'Segger')))
+        #
+        # env.addPackage('segger',
+        #                version='2.4',
+        #                tar=VOID_TGZ,
+        #                commands=segger_commands,
+        #                default=True)
