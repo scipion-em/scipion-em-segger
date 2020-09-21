@@ -69,7 +69,11 @@ class ProtUpdateSeg(EMProtocol):
         self.segPath = idMask2Segger(self._getExtraPath(), self.inputMask.get())
 
     def updateStep(self):
-        self._convertInputStep()
+        if not os.path.isfile(self._getExtraPath(sessionFile)):
+            self._convertInputStep()
+            restoreSession = False
+        else:
+            restoreSession = True
         config = configparser.ConfigParser()
         _chimeraPdbTemplateFileName = \
             os.path.abspath(self._getExtraPath(
@@ -90,8 +94,12 @@ class ProtUpdateSeg(EMProtocol):
         with open(self._getExtraPath(CHIMERA_CONFIG_FILE),
                   'w') as configfile:
             config.write(configfile)
+
         self.writeChimeraScript()
-        args = os.path.abspath(self._getExtraPath('scriptChimera.cxc'))
+        if not restoreSession:
+            args = os.path.abspath(self._getExtraPath('scriptChimera.cxc'))
+        else:
+            args = os.path.abspath(self._getExtraPath(sessionFile))
 
         cwd = os.path.abspath(self._getExtraPath())
         Chimera.runProgram(Plugin.getProgram(), args, cwd=cwd)
@@ -155,7 +163,7 @@ class ProtUpdateSeg(EMProtocol):
     def _summary(self):
         summary = []
         summary.append("Input Volume provided: %s\n"
-                       % self.inputVolume.get().getFileName())
+                       % self.inputMask.get().getFileName())
         if self.getOutputsSize() >= 1:
             if hasattr(self, 'outputSegmentation'):
                 msg = ("Segmentation mask succesfully generated: %s\n" % self.outputSegmentation.getFileName())
