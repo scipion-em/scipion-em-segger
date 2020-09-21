@@ -25,3 +25,4 @@
 # **************************************************************************
 
 from .protocol_segment_map import ProtSegmentMap
+from .protocol_update_segmentation import ProtUpdateSeg
