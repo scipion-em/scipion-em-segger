@@ -49,7 +49,7 @@ class Plugin(pwem.Plugin):
     @classmethod
     def runChimeraProgram(cls, program, args="", cwd=None):
         """ Internal shortcut function to launch chimera program. """
-        chimera_plugin.runChimeraProgram(program, args="", cwd=cwd)
+        chimera_plugin.runChimeraProgram(program, args=args, cwd=cwd)
 
     @classmethod
     def getProgram(cls, progName="chimera"):
