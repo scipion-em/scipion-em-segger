@@ -44,7 +44,7 @@ def idMask2Segger(path, volume):
     a.format_version = 2
     a.name = os.path.basename(filePath)
     a.map_size = np.array(mask.shape, np.int32)
-    a.map_path = filePath
+    a.map_path = os.path.abspath(filePath)
     a.map_level = 0.01
     a.ijk_to_xyz_trasform = np.array([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.]], np.float32)
     atom = tables.Atom.from_dtype(mask.dtype)
