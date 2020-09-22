@@ -24,11 +24,16 @@
 # *
 # **************************************************************************
 
-import os, configparser
+import os, configparser, glob
+import numpy as np
 
+from pwem.emlib.image import ImageHandler
+from pwem.objects import Volume
 from pwem.protocols import EMProtocol
 
 import pyworkflow.protocol.params as params
+
+import pyworkflow.utils as pwutils
 
 from chimera.constants import CHIMERA_CONFIG_FILE
 from pwem.viewers.viewer_chimera import (Chimera,
@@ -107,37 +112,34 @@ class ProtUpdateSeg(EMProtocol):
         self._createOutputStep()
 
     def _createOutputStep(self):
-        pass
-        # file = 'segmask_' + pwutils.removeBaseExt(self.inputVolume.get().getFileName()) + '.mrc'
-        # file = self._getExtraPath(file)
-        # volume = Volume()
-        # volume.setLocation(file)
-        # volume.setSamplingRate(self.inputVolume.get().getSamplingRate())
-        # if self.pieces.get() == 0 or self.pieces.get() == 2:
-        #     self._defineOutputs(outputSegmentation=volume)
-        #     self._defineSourceRelation(self.inputVolume, volume)
-        # if self.pieces.get() == 1 or self.pieces.get() == 2:
-        #     setVolumes = self._createSetOfVolumes()
-        #     setVolumes.setSamplingRate(self.inputVolume.get().getSamplingRate())
-        #     ih = ImageHandler()
-        #     mask = ih.read(volume)
-        #     mask = mask.getData()
-        #     ids_mask = np.unique(mask)
-        #     ids_mask = np.delete(ids_mask, 0)
-        #     for idm in ids_mask:
-        #         piece = Volume()
-        #         piece.setLocation(self._getExtraPath('segmentation_group_%d.mrc' % int(idm)))
-        #         piece.setSamplingRate(self.inputVolume.get().getSamplingRate())
-        #         mask_logical = mask == idm
-        #         pieceData = mask * mask_logical / idm
-        #         img = ih.createImage()
-        #         img.setData(pieceData)
-        #         ih.write(img, piece)
-        #         setVolumes.append(piece)
-        #     self._defineOutputs(outputGroups=setVolumes)
-        #     self._defineSourceRelation(self.inputVolume, setVolumes)
-
-
+        outMapPath = glob.glob(self._getExtraPath("*.mrc"))[0]
+        volume = Volume()
+        volume.setLocation(outMapPath)
+        volume.setSamplingRate(self.inputMask.get().getSamplingRate())
+        if self.pieces.get() == 0 or self.pieces.get() == 2:
+            self._defineOutputs(outputSegmentation=volume)
+            self._defineSourceRelation(self.inputMask, volume)
+        if self.pieces.get() == 1 or self.pieces.get() == 2:
+            baseOutFile = pwutils.removeBaseExt(outMapPath)
+            setVolumes = self._createSetOfVolumes()
+            setVolumes.setSamplingRate(self.inputMask.get().getSamplingRate())
+            ih = ImageHandler()
+            mask = ih.read(volume)
+            mask = mask.getData()
+            ids_mask = np.unique(mask)
+            ids_mask = np.delete(ids_mask, 0)
+            for idm in ids_mask:
+                piece = Volume()
+                piece.setLocation(self._getExtraPath(baseOutFile + '_group_%d.mrc' % int(idm)))
+                piece.setSamplingRate(self.inputMask.get().getSamplingRate())
+                mask_logical = mask == idm
+                pieceData = mask * mask_logical / idm
+                img = ih.createImage()
+                img.setData(pieceData)
+                ih.write(img, piece)
+                setVolumes.append(piece)
+            self._defineOutputs(outputGroups=setVolumes)
+            self._defineSourceRelation(self.inputMask, setVolumes)
 
     # --------------------------- UTILS functions ----------------------------
     def writeChimeraScript(self):
