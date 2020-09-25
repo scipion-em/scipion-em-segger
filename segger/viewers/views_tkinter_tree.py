@@ -80,10 +80,10 @@ class SeggerBrowser(ObjectBrowser):
 
     def _itemDoubleClick(self, obj):
         self.volume = obj
-        self.proc = threading.Thread(target=self.lanchSeggerForVolume, args=(self.volume,))
+        self.proc = threading.Thread(target=self.launchSeggerForVolume, args=(self.volume,))
         self.proc.start()
 
-    def lanchSeggerForVolume(self, volume):
+    def launchSeggerForVolume(self, volume):
         segFile = idMask2Segger(self.path, volume)
         filePath = self.chimeraViewFile(segFile)
         program = Chimera.getProgram()
