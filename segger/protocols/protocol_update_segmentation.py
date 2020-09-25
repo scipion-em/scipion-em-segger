@@ -109,9 +109,12 @@ class ProtUpdateSeg(EMProtocol):
         cwd = os.path.abspath(self._getExtraPath())
         Chimera.runProgram(Plugin.getProgram(), args, cwd=cwd)
 
-        self._createOutputStep()
+        outMapPath = self._getExtraPath("Map__*")
+        outMapPath = glob.glob(outMapPath)
+        if outMapPath:
+            self._createOutputStep(outMapPath[0])
 
-    def _createOutputStep(self):
+    def _createOutputStep(self, outMapPath):
         outMapPath = glob.glob(self._getExtraPath("*.mrc"))[0]
         volume = Volume()
         volume.setLocation(outMapPath)
