@@ -62,7 +62,7 @@ class SeggerViewer(pwviewer.Viewer):
 
     def chimeraViewFile(self):
         outPath = self.protocol._getExtraPath()
-        filePath = self.protocol._getTmpPath('viewChimera.py')
+        filePath = self.protocol._getExtraPath('viewChimera.py')
         f = open(filePath, "w")
         f.write('from chimerax.core.commands import run\n')
         for segmentation in glob.glob(os.path.join(outPath, '*.seg')):
